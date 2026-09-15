@@ -429,8 +429,3 @@ MCP requests are logged in Moodle's standard web service logs:
 - Filter by "Web service" component
 
 
-## 💖 Support the development of this plugin
-
-Keep it updated and free for everyone!
-
-[☕ Buy Me a Coffee (Ko-fi)](https://ko-fi.com/onbirdev) | [💸 Support via PayPal](https://www.paypal.me/onbirdev)
