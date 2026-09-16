@@ -159,7 +159,7 @@ class server extends webservice_base_server {
     }
 
     /**
-     * Extract Bearer token from Authorization header or fallback to wstoken GET param.
+     * Extract Bearer token from the Authorization header. URL-embedded tokens are not accepted.
      *
      * @return string|null
      */
@@ -188,9 +188,7 @@ class server extends webservice_base_server {
         if (!empty($auth) && preg_match('/Bearer\s+(\S+)/i', $auth, $matches)) {
             return $matches[1];
         }
-
-        // Fallback to GET parameter (validated).
-        return optional_param('wstoken', null, PARAM_ALPHANUMEXT);
+        return null;
     }
 
     /**
@@ -623,5 +621,6 @@ class server extends webservice_base_server {
         die;
     }
 }
+
 
 

@@ -89,14 +89,8 @@ Ensure users have the `webservice/mcp:use` capability to access the MCP web serv
 
 #### Endpoint URL
 
-The MCP server endpoint can be accessed in two ways.
 
-**1. Using query parameter (wstoken):**
-```
-https://your-moodle-site.com/webservice/mcp/server.php?wstoken=YOUR_TOKEN
-```
-
-**2. Using Authorization header (Bearer token):**
+The MCP server endpoint requires a Bearer token in the Authorization header.
 ```
 https://your-moodle-site.com/webservice/mcp/server.php
 ```
@@ -258,7 +252,8 @@ Monitor MCP web service usage through:
 #### Using cURL
 
 ```bash
-curl -X POST "https://your-moodle-site.com/webservice/mcp/server.php?wstoken=YOUR_TOKEN" \
+curl -X POST "https://your-moodle-site.com/webservice/mcp/server.php" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -427,5 +422,6 @@ The plugin includes comprehensive tests for:
 MCP requests are logged in Moodle's standard web service logs:
 - **Site administration → Reports → Logs**
 - Filter by "Web service" component
+
 
 
