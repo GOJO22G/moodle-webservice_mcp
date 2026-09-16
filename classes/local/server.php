@@ -47,6 +47,9 @@ class server extends webservice_base_server {
     /** @var string Protocol version supported by this server. */
     private const PROTOCOL_VERSION = '2025-03-26';
 
+    /** @var array Protocol versions this server can negotiate with a client. */
+    private const SUPPORTED_PROTOCOL_VERSIONS = ['2025-03-26'];
+
     /** @var string Server name. */
     private const SERVER_NAME = 'Moodle MCP Server';
 
@@ -275,8 +278,13 @@ class server extends webservice_base_server {
      * @return void
      */
     protected function send_initialize_response(): void {
+        $requestedversion = $this->mcprequest->params['protocolVersion'] ?? null;
+        $negotiatedversion = in_array($requestedversion, self::SUPPORTED_PROTOCOL_VERSIONS, true)
+            ? $requestedversion
+            : self::PROTOCOL_VERSION;
+
         $result = [
-            'protocolVersion' => self::PROTOCOL_VERSION,
+            'protocolVersion' => $negotiatedversion,
             'capabilities' => [
                 'tools' => ['listChanged' => false],
             ],
