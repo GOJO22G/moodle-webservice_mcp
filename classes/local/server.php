@@ -262,7 +262,7 @@ class server extends webservice_base_server {
             'version' => self::SERVER_VERSION,
             'protocolVersion' => self::PROTOCOL_VERSION,
             'capabilities' => [
-                'tools' => ['listChanged' => true],
+                'tools' => ['listChanged' => false],
             ],
         ];
 
@@ -278,7 +278,7 @@ class server extends webservice_base_server {
         $result = [
             'protocolVersion' => self::PROTOCOL_VERSION,
             'capabilities' => [
-                'tools' => ['listChanged' => true],
+                'tools' => ['listChanged' => false],
             ],
             'serverInfo' => [
                 'name' => self::SERVER_NAME,
@@ -621,6 +621,7 @@ class server extends webservice_base_server {
         die;
     }
 }
+
 
 
 
