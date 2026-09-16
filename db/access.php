@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = [
     'webservice/mcp:use' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [],
     ],
 ];
