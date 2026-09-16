@@ -373,7 +373,7 @@ class server extends webservice_base_server {
         }
 
         if ($exception !== null) {
-            $response = $this->generate_error($exception);
+            $response = $this->generate_tool_error($exception);
             echo $this->safe_json_encode($response);
             return;
         }
@@ -413,7 +413,7 @@ class server extends webservice_base_server {
             $this->log_exception_for_debug($ex);
         }
 
-        echo $this->safe_json_encode($this->generate_error($ex));
+        echo $this->safe_json_encode($this->generate_tool_error($ex));
     }
 
     /**
@@ -453,6 +453,29 @@ class server extends webservice_base_server {
                 'data' => $errordata,
             ],
             'id' => $this->mcprequest->id ?? null,
+        ];
+    }
+
+    /**
+     * Generates a JSON-RPC success envelope reporting a tool execution
+     * failure. Per MCP spec, an exception thrown while executing a tool
+     * (bad input, permission denied, etc.) is a normal outcome of the
+     * exchange, not a protocol-level error - so it must be returned as a
+     * successful response with isError true, not a top-level JSON-RPC error.
+     *
+     * @param Exception|moodle_exception|null $ex
+     * @return array
+     */
+    protected function generate_tool_error($ex): array {
+        $message = $ex !== null ? $ex->getMessage() : 'Internal error';
+
+        return [
+            'jsonrpc' => $this->mcprequest->jsonrpc ?? '2.0',
+            'id' => $this->mcprequest->id ?? null,
+            'result' => [
+                'content' => [['type' => 'text', 'text' => $message]],
+                'isError' => true,
+            ],
         ];
     }
 
