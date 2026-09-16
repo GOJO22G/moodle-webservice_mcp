@@ -460,11 +460,6 @@ class server extends webservice_base_server {
         header('Cache-Control: private, must-revalidate, max-age=0');
         header('Expires: ' . gmdate('D, d M Y H:i:s', 0) . ' GMT');
         header('Pragma: no-cache');
-
-        // CORS - allow any origin by default (adjust for production use).
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
     }
 
     /**
@@ -628,4 +623,5 @@ class server extends webservice_base_server {
         die;
     }
 }
+
 
