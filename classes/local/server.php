@@ -107,6 +107,9 @@ class server extends webservice_base_server {
             die;
         }
 
+                // Reject write-type calls from tokens whose OAuth scope doesn't permit writes.
+        $this->enforce_scope();
+
         // Use parent flow for standard function calls.
         parent::run();
     }
@@ -632,6 +635,50 @@ class server extends webservice_base_server {
      *
      * @copyright 2026 AlmaBay Networks Pvt. Ltd.
      */
+      
+          /**
+     * Verify the token's granted OAuth scope permits the function it is about to call.
+     *
+     * Read-type functions are unrestricted. Write-type functions require the token's
+     * granted scope (as recorded by local_oauth2) to include moodle_mcp_write.
+     *
+     * Tokens with no matching local_oauth2 record (e.g. an admin-generated manual
+     * token, not created via OAuth login) are left unrestricted here - Moodle's own
+     * per-function capability checks still apply downstream regardless.
+     *
+     * @throws \core\exception\moodle_exception If a write function is called without
+     *         the moodle_mcp_write scope granted.
+     */
+    private function enforce_scope(): void {
+        global $DB;
+
+        if (empty($this->functionname)) {
+            return;
+        }
+
+        $info = external_api::external_function_info($this->functionname);
+        $functiontype = $info->type ?? 'read';
+
+        debugging('MCP SCOPE DEBUG: enforce_scope reached for ' . $this->functionname . ', type=' . $functiontype, DEBUG_DEVELOPER);
+
+        if ($functiontype !== 'write') {
+            return;
+        }
+
+        $tokenrow = $DB->get_record('local_oauth2_access_token', ['access_token' => $this->token]);
+
+        if (!$tokenrow) {
+            return;
+        }
+
+        $grantedscopes = explode(' ', (string) $tokenrow->scope);
+
+        debugging('MCP SCOPE DEBUG: functionname=' . $this->functionname . ' | functiontype=' . $functiontype . ' | token=' . $this->token . ' | grantedscopes=' . print_r($grantedscopes, true), DEBUG_DEVELOPER);
+
+        if (!in_array('moodle_mcp_write', $grantedscopes, true)) {
+            throw new moodle_exception('err_scope_insufficient', 'webservice_mcp');
+        }
+    }
     public function exception_handler($ex): void {
         global $CFG;
 
