@@ -78,6 +78,13 @@ class tool_provider {
                 continue;
             }
 
+            // readOnlyHint reuses the same 'type' metadata enforce_scope()
+            // relies on for write-permission checks, so both stay consistent.
+            // destructiveHint is intentionally NOT set: Moodle's function
+            // metadata only distinguishes read/write, not which writes are
+            // destructive - guessing that risks mislabeling something as safe.
+            $functiontype = $info->type ?? 'read';
+
             $inputschema = self::build_schema($info->parameters_desc);
             $outputschema = self::build_schema($info->returns_desc);
 
@@ -90,6 +97,9 @@ class tool_provider {
                     'properties' => [
                         'result' => $outputschema,
                     ],
+                ],
+                'annotations' => [
+                    'readOnlyHint' => ($functiontype === 'read'),
                 ],
             ];
         }
