@@ -659,21 +659,17 @@ class server extends webservice_base_server {
         $info = external_api::external_function_info($this->functionname);
         $functiontype = $info->type ?? 'read';
 
-        debugging('MCP SCOPE DEBUG: enforce_scope reached for ' . $this->functionname . ', type=' . $functiontype, DEBUG_DEVELOPER);
-
         if ($functiontype !== 'write') {
             return;
         }
 
-        $tokenrow = $DB->get_record('local_oauth2_access_token', ['access_token' => $this->token]);
+        $scoperow = $DB->get_record('local_mcpbridge_token_scope', ['token' => $this->token]);
 
-        if (!$tokenrow) {
+        if (!$scoperow) {
             return;
         }
 
-        $grantedscopes = explode(' ', (string) $tokenrow->scope);
-
-        debugging('MCP SCOPE DEBUG: functionname=' . $this->functionname . ' | functiontype=' . $functiontype . ' | token=' . $this->token . ' | grantedscopes=' . print_r($grantedscopes, true), DEBUG_DEVELOPER);
+        $grantedscopes = explode(' ', (string) $scoperow->scope);
 
         if (!in_array('moodle_mcp_write', $grantedscopes, true)) {
             throw new moodle_exception('err_scope_insufficient', 'webservice_mcp');
