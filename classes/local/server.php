@@ -666,7 +666,11 @@ class server extends webservice_base_server {
         $scoperow = $DB->get_record('local_mcpbridge_token_scope', ['token' => $this->token]);
 
         if (!$scoperow) {
-            return;
+            // Fail closed: no scope record means we cannot confirm this token
+            // was granted write access, so treat it as not permitted rather than
+            // silently trusting it. Legitimate OAuth-bridged tokens always get a
+            // row here (see local_mcpbridge/classes/observers.php).
+            throw new moodle_exception('err_scope_insufficient', 'webservice_mcp');
         }
 
         $grantedscopes = explode(' ', (string) $scoperow->scope);
