@@ -656,6 +656,14 @@ class server extends webservice_base_server {
             return;
         }
 
+        // Enforce our own reviewed allowlist for EVERY function, read or write -
+        // not just at tools/list time. Moodle's own admin UI lets any site admin
+        // add any of ~750 functions to this service; without this check, that
+        // table alone would be the real safety boundary. See approved_functions.php.
+        if (!approved_functions::is_approved($this->functionname)) {
+            throw new moodle_exception('err_function_not_approved', 'webservice_mcp');
+        }
+
         $info = external_api::external_function_info($this->functionname);
         $functiontype = $info->type ?? 'read';
 

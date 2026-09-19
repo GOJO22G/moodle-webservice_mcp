@@ -24,6 +24,7 @@ use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use Throwable;
+use webservice_mcp\local\approved_functions;
 
 /**
  * Tool provider for MCP protocol.
@@ -66,6 +67,12 @@ class tool_provider {
         );
 
         foreach ($functions as $function) {
+            // Enforce our own reviewed allowlist, regardless of what is registered
+            // on the service in Moodle's own admin UI. See approved_functions.php.
+            if (!approved_functions::is_approved($function->functionname)) {
+                continue;
+            }
+
             try {
                 $info = external_api::external_function_info($function->functionname);
             } catch (Throwable $e) {

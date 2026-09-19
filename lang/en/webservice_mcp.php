@@ -34,3 +34,5 @@ $string['pluginname'] = 'Model Context Protocol';
 $string['privacy:metadata'] = 'The MCP web service plugin does not store any personal data. It provides a protocol for accessing existing Moodle web service functions.';
 
 $string['err_scope_insufficient'] = 'This token does not have permission to call write functions';
+
+$string['err_function_not_approved'] = 'This function is not on the approved list for this MCP server';
